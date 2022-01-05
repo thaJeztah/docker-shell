@@ -1,8 +1,16 @@
-.PHONY: image install
+.PHONY: image install run
 
-# TODO enable buildkit once https://github.com/moby/moby/issues/38254 is resolved
 image:
-	cat Dockerfile | DOCKER_BUILDKIT=0 docker build -t thajeztah/dockershell https://github.com/yudai/gotty.git#v2.0.0-alpha.3 -f -
+	docker build -t thajeztah/ddshell .
 
 install:
-	cp ./docker-shell.sh ~/.docker/cli-plugins/docker-shell 
+	docker extension install thajeztah/ddshell
+
+uninstall:
+	docker extension rm thajeztah/ddshell
+
+run:
+	docker run -d --rm --pid=host --privileged -p 8129:8080 thajeztah/ddshell
+
+release:
+	docker buildx build --platform=linux/amd64,linux/arm64 -t thajeztah/ddshell --push .

@@ -1,0 +1,7 @@
+services:
+  ddshell:
+    image: ${DESKTOP_PLUGIN_IMAGE}
+    ports:
+      - "8129:8080"
+    privileged: true
+    pid: host
