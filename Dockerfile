@@ -1,12 +1,16 @@
-ARG GO_VERSION=1.12.10
+ARG GO_VERSION=1.19
 
 FROM golang:${GO_VERSION}-alpine AS build
-
+RUN apk add --no-cache git
 RUN mkdir -p /go/src/github.com/yudai/gotty
 WORKDIR /go/src/github.com/yudai/gotty
 
-COPY . .
-RUN go install -v github.com/yudai/gotty
+RUN git init . \
+ && git remote add origin "https://github.com/yudai/gotty.git" \
+ && git fetch --update-head-ok --depth 1 origin \
+ && git checkout -q "v2.0.0-alpha.3"
+
+RUN GO111MODULE=off go install -v github.com/yudai/gotty
 
 FROM alpine
 EXPOSE 8080
